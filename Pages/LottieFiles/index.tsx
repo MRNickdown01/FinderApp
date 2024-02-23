@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Button, LogBox, View, StyleSheet } from "react-native";
+import { Button, LogBox, View, StyleSheet, Text } from "react-native";
 import { Audio } from "expo-av";
 import LottieView from "lottie-react-native";
 
@@ -33,11 +33,15 @@ const LottieFiles: FC = ({ navigation }: any) => {
     <View style={styles.container}>
       <LottieView
         style={styles.lottie}
-        source={require("../../assets/atrology_animation.json")}
+        source={require("../../assets/walking.json")}
         autoPlay
       />
+      <Text style={styles.text}> You can find out anything</Text>
       <Button title="Play Sound" onPress={() => playSound()} />
-      <Button title="Route" onPress={() => navigation.navigate("dashboard")} />
+      <Button
+        title="Route"
+        onPress={() => navigation.navigate("main-dashboard")}
+      />
     </View>
   );
 };
@@ -47,6 +51,14 @@ const styles = StyleSheet.create({
   },
   lottie: {
     flex: 1,
+  },
+  text: {
+    textAlign: "center",
+    fontSize: 22,
+    fontWeight: "600",
+    position: "relative",
+    bottom: 80,
+    color: "#7073D7",
   },
 });
 

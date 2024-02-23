@@ -12,8 +12,10 @@ import MapView, { Callout, Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { PlacesAPIResponse } from "../../type";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { GMAP_API_KEY } from "@env";
 
-const Dashboard: React.FC = ({ navigation }: any) => {
+const Dashboard: React.FC = ({ route }: any) => {
+  const star = "../../assets/star_1.png";
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<String | null>(null);
   const [resturants, setResturants] = useState<PlacesAPIResponse["results"]>(
@@ -30,6 +32,7 @@ const Dashboard: React.FC = ({ navigation }: any) => {
     let location = await Location.getCurrentPositionAsync({});
     if (location !== undefined) {
       setLocation(location);
+      await getResturant(location);
     }
     console.log(location?.coords?.latitude);
   };
@@ -45,10 +48,11 @@ const Dashboard: React.FC = ({ navigation }: any) => {
     console.log(text?.coords);
   }
   console.log(location?.coords?.latitude);
+  console.log(route?.params?.route);
   console.log(location?.coords?.longitude);
 
-  const getResturant = () => {
-    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location?.coords?.latitude}%2C${location?.coords?.longitude}&radius=3000&type=restaurant&key=AIzaSyBO7_HNRR37vNAkKNy92vsIZ5rEjQFoHUQ`;
+  const getResturant = (location: Location.LocationObject) => {
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location?.coords?.latitude}%2C${location?.coords?.longitude}&radius=3000&type=${route?.params?.route}&key=${GMAP_API_KEY}`;
 
     fetch(url)
       .then((res) => {
@@ -99,7 +103,7 @@ const Dashboard: React.FC = ({ navigation }: any) => {
         </MapView>
       )}
 
-      <Button title="Resturant" onPress={() => getResturant()} />
+      {/* <Button title="Resturant" onPress={() => getResturant()} /> */}
       <ScrollView>
         {resturants?.map((i, id) => (
           <View style={styles.cardMain} key={id}>
@@ -108,14 +112,18 @@ const Dashboard: React.FC = ({ navigation }: any) => {
                 <Text style={styles.heading}>{i?.name}</Text>
               </View>
               <Text>{i?.vicinity}</Text>
-              <View>
-                <Text>{i?.rating}</Text>
-              </View>
+              {i?.rating !== undefined && (
+                <View style={styles.rating}>
+                  <Image source={require(star)} style={styles.icon}></Image>
+                  <Image source={require(star)} style={styles.icon}></Image>
+                  <Image source={require(star)} style={styles.icon}></Image>
+                  <Text>{i?.rating}</Text>
+                </View>
+              )}
             </View>
           </View>
         ))}
       </ScrollView>
-      <Image src={"../../assets/star.png"} style={{ width: 50, height: 50 }} />
     </View>
   );
 };
@@ -149,8 +157,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
+  rating: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   image: {
     width: 300,
+  },
+  icon: {
+    width: 15,
+    height: 15,
   },
 });
 export default Dashboard;

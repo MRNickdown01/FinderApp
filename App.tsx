@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import LottieFiles from "./Pages/LottieFiles";
 import Dashboard from "./Pages/Dashboard";
+import MainDashboard from "./Pages/MainDashboard";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -17,6 +18,11 @@ export default function App() {
           name="lottiefiles"
           component={LottieFiles}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="main-dashboard"
+          component={MainDashboard}
+          options={{ title: "Everywhere" }}
         />
         <Stack.Screen
           name="dashboard"
