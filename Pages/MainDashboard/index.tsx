@@ -1,5 +1,14 @@
 import React from "react";
-import { View, StyleSheet, Image, Text, Button } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  Button,
+  ActivityIndicator,
+  BackHandler,
+  Alert,
+} from "react-native";
 import Card from "../../Component/Card";
 
 const MainDashboard = ({ navigation }: any) => {
@@ -9,6 +18,18 @@ const MainDashboard = ({ navigation }: any) => {
   const bank = "../../assets/bank_2.png";
   const school = "../../assets/open-book.png";
   const flight = "../../assets/flight.png";
+
+  const exitApp = () =>
+    Alert.alert("Exit App", "Are you sure exit app.", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Ok",
+        onPress: () => BackHandler.exitApp(),
+      },
+    ]);
   return (
     <View style={styles.container}>
       <View style={styles.mainCard}>
@@ -46,7 +67,11 @@ const MainDashboard = ({ navigation }: any) => {
         />
       </View>
       <View style={styles.button}>
-        <Button title="Dectet Automatic Location" color="#7805"></Button>
+        <Button
+          title="Dectet Automatic Location"
+          color="#7805"
+          onPress={exitApp}
+        ></Button>
       </View>
     </View>
   );

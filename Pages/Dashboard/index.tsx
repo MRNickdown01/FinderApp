@@ -7,6 +7,7 @@ import {
   Button,
   ScrollView,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -18,6 +19,7 @@ const Dashboard: React.FC = ({ route }: any) => {
   const star = "../../assets/star_1.png";
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<String | null>(null);
+  const [loading, setLoading] = useState(true);
   const [resturants, setResturants] = useState<PlacesAPIResponse["results"]>(
     []
   );
@@ -52,6 +54,7 @@ const Dashboard: React.FC = ({ route }: any) => {
   console.log(location?.coords?.longitude);
 
   const getResturant = (location: Location.LocationObject) => {
+    setLoading(true);
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location?.coords?.latitude}%2C${location?.coords?.longitude}&radius=3000&type=${route?.params?.route}&key=${GMAP_API_KEY}`;
 
     fetch(url)
@@ -62,9 +65,13 @@ const Dashboard: React.FC = ({ route }: any) => {
       .then((res: PlacesAPIResponse) => {
         console.log(res?.results);
         setResturants(res?.results);
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
       })
       .catch((err: any) => {
         console.log(err);
+        setLoading(false);
       });
   };
   const getResturantDetail = (resturant: PlacesAPIResponse["results"][0]) => {};
@@ -74,36 +81,38 @@ const Dashboard: React.FC = ({ route }: any) => {
     <View style={styles.container}>
       <StatusBar style="light" />
       {location && (
-        <MapView
-          initialRegion={{
-            latitude: location?.coords?.latitude!,
-            longitude: location?.coords?.longitude,
-            latitudeDelta: 0.02,
-            longitudeDelta: 0.02,
-          }}
-          showsUserLocation
-          showsMyLocationButton
-          userLocationPriority="high"
-          moveOnMarkerPress
-          showsScale
-          style={styles?.map}
-        >
-          {resturants?.map((resturant, i) => (
-            <Marker
-              key={i}
-              coordinate={{
-                latitude: resturant?.geometry?.location?.lat,
-                longitude: resturant?.geometry?.location?.lng,
-              }}
-              title={resturant?.name}
-            >
-              <Callout onPress={() => getResturantDetail(resturant)}></Callout>
-            </Marker>
-          ))}
-        </MapView>
+        <View style={styles.map_parent}>
+          <MapView
+            initialRegion={{
+              latitude: location?.coords?.latitude!,
+              longitude: location?.coords?.longitude,
+              latitudeDelta: 0.02,
+              longitudeDelta: 0.02,
+            }}
+            showsUserLocation
+            showsMyLocationButton
+            userLocationPriority="high"
+            moveOnMarkerPress
+            showsScale
+            style={styles.map}
+          >
+            {resturants?.map((resturant, i) => (
+              <Marker
+                key={i}
+                coordinate={{
+                  latitude: resturant?.geometry?.location?.lat,
+                  longitude: resturant?.geometry?.location?.lng,
+                }}
+                title={resturant?.name}
+              >
+                <Callout
+                  onPress={() => getResturantDetail(resturant)}
+                ></Callout>
+              </Marker>
+            ))}
+          </MapView>
+        </View>
       )}
-
-      {/* <Button title="Resturant" onPress={() => getResturant()} /> */}
       <ScrollView>
         {resturants?.map((i, id) => (
           <View style={styles.cardMain} key={id}>
@@ -132,10 +141,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  map: {
+  map_parent: {
     width: "100%",
     height: "50%",
   },
+  map: {
+    width: "100%",
+    height: "100%",
+  },
+
   cardMain: {
     margin: 16,
   },
@@ -168,6 +182,10 @@ const styles = StyleSheet.create({
   icon: {
     width: 15,
     height: 15,
+  },
+  loader: {
+    position: "relative",
+    top: "50%",
   },
 });
 export default Dashboard;
