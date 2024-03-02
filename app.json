@@ -15,17 +15,29 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.nilesh.resturant"
+      "package": "com.nilesh.resturant",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ff5bca53-601d-4c4a-87b9-a73f021d7532"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ff5bca53-601d-4c4a-87b9-a73f021d7532"
     }
   }
 }
